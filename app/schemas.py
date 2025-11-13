@@ -30,19 +30,30 @@ class Commerce(CommerceBase):
         from_attributes = True
 
 class UserBase(BaseModel):
-    wallet_id: str
+    username: str
 
 class UserCreate(UserBase):
     pass
 
 class User(UserBase):
     id: int
-    sats_earned: int
     level: int
+    lnbits_wallet_id: str
     created_at: datetime
     
     class Config:
         from_attributes = True
+
+class UserWithKeys(User):
+    lnbits_invoice_key: str
+    
+    class Config:
+        from_attributes = True
+
+class UserBalance(BaseModel):
+    user_id: int
+    balance_sats: float
+    balance_msats: int
 
 class VerificationCreate(BaseModel):
     commerce_id: int

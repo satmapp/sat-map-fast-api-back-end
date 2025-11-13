@@ -3,15 +3,31 @@ from sqlalchemy import and_
 from typing import Optional
 from app import models, schemas
 
-def create_user(db: Session, wallet_id: str):
-    db_user = models.User(wallet_id=wallet_id)
+def create_user_with_wallet(
+    db: Session, 
+    username: str, 
+    lnbits_user_id: Optional[str],
+    lnbits_wallet_id: str, 
+    lnbits_admin_key: str, 
+    lnbits_invoice_key: str
+):
+    db_user = models.User(
+        username=username,
+        lnbits_user_id=lnbits_user_id,
+        lnbits_wallet_id=lnbits_wallet_id,
+        lnbits_admin_key=lnbits_admin_key,
+        lnbits_invoice_key=lnbits_invoice_key
+    )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
-def get_user_by_wallet(db: Session, wallet_id: str):
-    return db.query(models.User).filter(models.User.wallet_id == wallet_id).first()
+def get_user_by_username(db: Session, username: str):
+    return db.query(models.User).filter(models.User.username == username).first()
+
+def get_user_by_invoice_key(db: Session, invoice_key: str):
+    return db.query(models.User).filter(models.User.lnbits_invoice_key == invoice_key).first()
 
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
@@ -70,15 +86,7 @@ def create_reward(db: Session, user_id: int, commerce_id: int, amount_sats: int,
         reward_type=reward_type
     )
     db.add(db_reward)
-    
-    user = get_user(db, user_id)
-    user.sats_earned += amount_sats
-    
     db.commit()
     db.refresh(db_reward)
     return db_reward
-
-def get_user_balance(db: Session, user_id: int):
-    user = get_user(db, user_id)
-    return user.sats_earned if user else 0
 

@@ -7,8 +7,11 @@ class User(Base):
     __tablename__ = "users"
     
     id = Column(Integer, primary_key=True, index=True)
-    wallet_id = Column(String, unique=True, index=True)
-    sats_earned = Column(Integer, default=0)
+    username = Column(String, unique=True, index=True)
+    lnbits_user_id = Column(String, unique=True, index=True, nullable=True)
+    lnbits_wallet_id = Column(String, unique=True, index=True)
+    lnbits_admin_key = Column(String)  # Para operaciones administrativas
+    lnbits_invoice_key = Column(String, unique=True, index=True)  # Usado como API key
     level = Column(Integer, default=1)
     created_at = Column(DateTime, default=datetime.utcnow)
     
